@@ -1,13 +1,13 @@
 package com.pattern.stake.controller;
 
 import com.pattern.stake.service.DiskService;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/disk")
+@RequestMapping("/disk")
 public class DiskController {
 
 	private final DiskService diskService;
@@ -17,22 +17,22 @@ public class DiskController {
 	}
 
 	@GetMapping("/state")
-	public String getCurrentState() {
-		return diskService.getCurrentStateName();
+	public DiskResponse getCurrentState() {
+		return diskService.getCurrentStateResponse();
 	}
 
 	@PostMapping("/read")
-	public String read() {
+	public DiskResponse read() {
 		return diskService.read();
 	}
 
 	@PostMapping("/write")
-	public String write() {
+	public DiskResponse write() {
 		return diskService.write();
 	}
 
 	@PostMapping("/reset")
-	public String reset() {
+	public DiskResponse reset() {
 		return diskService.reset();
 	}
 }

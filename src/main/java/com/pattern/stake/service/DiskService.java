@@ -1,6 +1,7 @@
 package com.pattern.stake.service;
 
 import com.pattern.stake.context.Disk;
+import com.pattern.stake.controller.DiskResponse;
 import com.pattern.stake.state.DiskState;
 import org.springframework.stereotype.Service;
 
@@ -21,24 +22,31 @@ public class DiskService {
         return disk.getState();
     }
 
-    public String getCurrentStateName() {
-        return disk.getStateName();
+    public DiskResponse getCurrentStateResponse() {
+        return new DiskResponse(formatStateName(disk.getStateName()), "Current state retrieved.");
     }
 
-    public String read() {
-        return disk.read();
+    public DiskResponse read() {
+        String message = disk.read();
+        return new DiskResponse(formatStateName(disk.getStateName()), message);
     }
 
-    public String write() {
-        return disk.write();
+    public DiskResponse write() {
+        String message = disk.write();
+        return new DiskResponse(formatStateName(disk.getStateName()), message);
     }
 
-    public String reset() {
-        return disk.reset();
+    public DiskResponse reset() {
+        String message = disk.reset();
+        return new DiskResponse(formatStateName(disk.getStateName()), message);
     }
 
     public void changeState(DiskState state) {
         disk.setState(state);
+    }
+
+    private String formatStateName(String stateName) {
+        return stateName.substring(0, 1).toUpperCase() + stateName.substring(1).toLowerCase();
     }
 }
 
