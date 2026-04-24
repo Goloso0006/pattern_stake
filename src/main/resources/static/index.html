@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disk State Controller</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #111827;
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+            --border: #334155;
+            --primary: #38bdf8;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --idle: #60a5fa;
+            --reading: #34d399;
+            --writing: #fbbf24;
+            --error: #f87171;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: radial-gradient(circle at top, #1e293b, var(--bg));
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(17, 24, 39, 0.95);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        p.subtitle {
+            margin: 0 0 28px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.85);
+            margin-bottom: 18px;
+        }
+
+        .label {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .state {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.35rem;
+            font-weight: 700;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(96, 165, 250, 0.12);
+            border: 1px solid rgba(96, 165, 250, 0.35);
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--idle);
+            box-shadow: 0 0 0 6px rgba(96, 165, 250, 0.12);
+        }
+
+        .message {
+            min-height: 56px;
+            line-height: 1.5;
+            color: var(--text);
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            border: none;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.18);
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            opacity: 0.95;
+        }
+
+        button:disabled {
+            cursor: wait;
+            opacity: 0.7;
+            transform: none;
+        }
+
+        .btn-read {
+            background: linear-gradient(135deg, #16a34a, var(--success));
+        }
+
+        .btn-write {
+            background: linear-gradient(135deg, #d97706, var(--warning));
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #dc2626, var(--danger));
+        }
+
+        .footer {
+            margin-top: 16px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.875rem;
+        }
+
+        .state-idle .dot { background: var(--idle); box-shadow: 0 0 0 6px rgba(96, 165, 250, 0.12); }
+        .state-reading .dot { background: var(--reading); box-shadow: 0 0 0 6px rgba(52, 211, 153, 0.12); }
+        .state-writing .dot { background: var(--writing); box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.12); }
+        .state-error .dot { background: var(--error); box-shadow: 0 0 0 6px rgba(248, 113, 113, 0.12); }
+
+        .state-idle .state { border-color: rgba(96, 165, 250, 0.35); background: rgba(96, 165, 250, 0.12); }
+        .state-reading .state { border-color: rgba(52, 211, 153, 0.35); background: rgba(52, 211, 153, 0.12); }
+        .state-writing .state { border-color: rgba(251, 191, 36, 0.35); background: rgba(251, 191, 36, 0.12); }
+        .state-error .state { border-color: rgba(248, 113, 113, 0.35); background: rgba(248, 113, 113, 0.12); }
+
+        @media (max-width: 640px) {
+            .card {
+                padding: 22px;
+            }
+
+            .buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="card" id="app">
+    <h1>Disk State Controller</h1>
+    <p class="subtitle">Use the buttons below to control the disk state.</p>
+
+    <section class="panel">
+        <div class="label">Current State</div>
+        <div class="state" id="stateBadge">
+            <span class="dot" id="stateDot"></span>
+            <span id="stateText">Loading...</span>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="label">Message</div>
+        <div class="message" id="messageText">Waiting for the first response...</div>
+    </section>
+
+    <section class="buttons">
+        <button class="btn-read" id="readButton">Read</button>
+        <button class="btn-write" id="writeButton">Write</button>
+        <button class="btn-reset" id="resetButton">Reset</button>
+    </section>
+
+    <div class="footer">The page updates the disk state after each action.</div>
+</main>
+
+<script>
+    const app = document.getElementById('app');
+    const stateText = document.getElementById('stateText');
+    const messageText = document.getElementById('messageText');
+    const buttons = [
+        document.getElementById('readButton'),
+        document.getElementById('writeButton'),
+        document.getElementById('resetButton')
+    ];
+
+    // Convierte el nombre del estado a una clase visual.
+    function getStateClass(state) {
+        const normalized = String(state || '').trim().toLowerCase();
+
+        if (normalized === 'reading') return 'state-reading';
+        if (normalized === 'writing') return 'state-writing';
+        if (normalized === 'error') return 'state-error';
+        return 'state-idle';
+    }
+
+    // Actualiza la interfaz con la respuesta JSON del backend.
+    function renderResponse(data) {
+        const state = data?.state || 'Unknown';
+        const message = data?.message || 'No message available.';
+
+        stateText.textContent = state;
+        messageText.textContent = message;
+
+        app.className = `card ${getStateClass(state)}`;
+    }
+
+    function setButtonsDisabled(disabled) {
+        buttons.forEach((button) => {
+            button.disabled = disabled;
+        });
+    }
+
+    async function callApi(url, method) {
+        setButtonsDisabled(true);
+
+        try {
+            const response = await fetch(url, { method });
+
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+
+            const data = await response.json();
+            renderResponse(data);
+        } catch (error) {
+            messageText.textContent = `Error: ${error.message}`;
+        } finally {
+            setButtonsDisabled(false);
+        }
+    }
+
+    async function loadState() {
+        await callApi('/disk/state', 'GET');
+    }
+
+    document.getElementById('readButton').addEventListener('click', () => callApi('/disk/read', 'POST'));
+    document.getElementById('writeButton').addEventListener('click', () => callApi('/disk/write', 'POST'));
+    document.getElementById('resetButton').addEventListener('click', () => callApi('/disk/reset', 'POST'));
+
+    window.addEventListener('DOMContentLoaded', loadState);
+</script>
+</body>
+</html>
