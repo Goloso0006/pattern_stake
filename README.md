@@ -24,3 +24,6 @@ El disco mantiene un estado interno. Cuando se ejecuta una accion (`read`, `writ
 3. El backend procesa la accion usando el patron State.
 4. Se actualiza el estado y se retorna una respuesta JSON con `state` y `message`.
 
+## 5. Ejecutable
+- mvn spring-boot:run
+- http://localhost:8080
