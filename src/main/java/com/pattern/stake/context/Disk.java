@@ -5,10 +5,9 @@ import com.pattern.stake.state.IdleState;
 
 public class Disk {
 
-    private DiskState state;
+    private DiskState state = new IdleState();
 
     public Disk() {
-        this.state = new IdleState();
     }
 
     public Disk(DiskState state) {
@@ -36,7 +35,7 @@ public class Disk {
     }
 
     public String getStateName() {
-        return state == null ? "NO_STATE" : state.getName();
+        return state.getName();
     }
 }
 

@@ -2,7 +2,6 @@ package com.pattern.stake.service;
 
 import com.pattern.stake.context.Disk;
 import com.pattern.stake.state.DiskState;
-import com.pattern.stake.state.IdleState;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,7 +10,7 @@ public class DiskService {
     private final Disk disk;
 
     public DiskService() {
-        this.disk = new Disk(new IdleState());
+        this.disk = new Disk();
     }
 
     public Disk getDisk() {
