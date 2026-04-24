@@ -1,12 +1,14 @@
 package com.pattern.stake.context;
 
 import com.pattern.stake.state.DiskState;
+import com.pattern.stake.state.IdleState;
 
 public class Disk {
 
     private DiskState state;
 
     public Disk() {
+        this.state = new IdleState();
     }
 
     public Disk(DiskState state) {
@@ -19,6 +21,18 @@ public class Disk {
 
     public void setState(DiskState state) {
         this.state = state;
+    }
+
+    public String read() {
+        return state.read(this);
+    }
+
+    public String write() {
+        return state.write(this);
+    }
+
+    public String reset() {
+        return state.reset(this);
     }
 
     public String getStateName() {
