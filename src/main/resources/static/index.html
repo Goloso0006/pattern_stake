@@ -11,19 +11,17 @@
             --text: #e5e7eb;
             --muted: #94a3b8;
             --border: #334155;
-            --primary: #38bdf8;
             --success: #22c55e;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --neutral: #64748b;
             --idle: #60a5fa;
             --reading: #34d399;
             --writing: #fbbf24;
             --error: #f87171;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -39,191 +37,194 @@
 
         .card {
             width: 100%;
-            max-width: 520px;
+            max-width: 760px;
             background: rgba(17, 24, 39, 0.95);
             border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 32px;
+            border-radius: 16px;
+            padding: 24px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
         }
 
-        h1 {
-            margin: 0 0 8px;
-            font-size: 2rem;
-            text-align: center;
-        }
-
-        p.subtitle {
-            margin: 0 0 28px;
-            text-align: center;
-            color: var(--muted);
-        }
+        h1 { margin: 0 0 6px; text-align: center; }
+        .subtitle { margin: 0 0 20px; text-align: center; color: var(--muted); }
 
         .panel {
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px;
-            background: rgba(15, 23, 42, 0.85);
-            margin-bottom: 18px;
+            border-radius: 12px;
+            padding: 14px;
+            background: rgba(15, 23, 42, 0.8);
+            margin-bottom: 12px;
         }
 
         .label {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
+            color: var(--muted);
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: var(--muted);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .state {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            font-size: 1.35rem;
-            font-weight: 700;
-            padding: 10px 16px;
+            gap: 8px;
+            padding: 8px 12px;
             border-radius: 999px;
-            background: rgba(96, 165, 250, 0.12);
             border: 1px solid rgba(96, 165, 250, 0.35);
+            background: rgba(96, 165, 250, 0.12);
+            font-weight: 700;
         }
 
         .dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: var(--idle);
-            box-shadow: 0 0 0 6px rgba(96, 165, 250, 0.12);
         }
 
-        .message {
-            min-height: 56px;
-            line-height: 1.5;
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #0b1220;
             color: var(--text);
+            font-size: 0.95rem;
         }
 
         .buttons {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 12px 0;
         }
 
         button {
             border: none;
-            border-radius: 12px;
-            padding: 14px 16px;
-            font-size: 1rem;
+            border-radius: 10px;
+            padding: 12px;
+            color: #fff;
             font-weight: 700;
-            color: white;
             cursor: pointer;
-            transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
-            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.18);
         }
 
-        button:hover {
-            transform: translateY(-1px);
-            opacity: 0.95;
+        button:disabled { opacity: 0.7; cursor: wait; }
+
+        .btn-write { background: linear-gradient(135deg, #d97706, var(--warning)); }
+        .btn-read { background: linear-gradient(135deg, #16a34a, var(--success)); }
+        .btn-reset { background: linear-gradient(135deg, #dc2626, var(--danger)); }
+        .btn-clear { background: linear-gradient(135deg, #475569, var(--neutral)); }
+
+        .content-view {
+            white-space: pre-wrap;
+            min-height: 40px;
+            color: #cbd5e1;
         }
 
-        button:disabled {
-            cursor: wait;
-            opacity: 0.7;
-            transform: none;
+        .history {
+            margin: 0;
+            padding-left: 18px;
+            max-height: 180px;
+            overflow: auto;
         }
 
-        .btn-read {
-            background: linear-gradient(135deg, #16a34a, var(--success));
+        .history li {
+            margin: 4px 0;
+            color: #cbd5e1;
+            font-size: 0.92rem;
         }
 
-        .btn-write {
-            background: linear-gradient(135deg, #d97706, var(--warning));
-        }
+        .state-idle .dot { background: var(--idle); }
+        .state-reading .dot { background: var(--reading); }
+        .state-writing .dot { background: var(--writing); }
+        .state-error .dot { background: var(--error); }
 
-        .btn-reset {
-            background: linear-gradient(135deg, #dc2626, var(--danger));
-        }
-
-        .footer {
-            margin-top: 16px;
-            text-align: center;
-            color: var(--muted);
-            font-size: 0.875rem;
-        }
-
-        .state-idle .dot { background: var(--idle); box-shadow: 0 0 0 6px rgba(96, 165, 250, 0.12); }
-        .state-reading .dot { background: var(--reading); box-shadow: 0 0 0 6px rgba(52, 211, 153, 0.12); }
-        .state-writing .dot { background: var(--writing); box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.12); }
-        .state-error .dot { background: var(--error); box-shadow: 0 0 0 6px rgba(248, 113, 113, 0.12); }
-
-        .state-idle .state { border-color: rgba(96, 165, 250, 0.35); background: rgba(96, 165, 250, 0.12); }
-        .state-reading .state { border-color: rgba(52, 211, 153, 0.35); background: rgba(52, 211, 153, 0.12); }
-        .state-writing .state { border-color: rgba(251, 191, 36, 0.35); background: rgba(251, 191, 36, 0.12); }
-        .state-error .state { border-color: rgba(248, 113, 113, 0.35); background: rgba(248, 113, 113, 0.12); }
-
-        @media (max-width: 640px) {
-            .card {
-                padding: 22px;
-            }
-
-            .buttons {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 720px) {
+            .buttons { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
 <main class="card" id="app">
     <h1>Disk State Controller</h1>
-    <p class="subtitle">Use the buttons below to control the disk state.</p>
+    <p class="subtitle">Write content, read it, clear it, and review the operation history.</p>
 
     <section class="panel">
         <div class="label">Current State</div>
-        <div class="state" id="stateBadge">
-            <span class="dot" id="stateDot"></span>
-            <span id="stateText">Loading...</span>
-        </div>
+        <div class="state"><span class="dot"></span><span id="stateText">Loading...</span></div>
     </section>
 
     <section class="panel">
         <div class="label">Message</div>
-        <div class="message" id="messageText">Waiting for the first response...</div>
+        <div id="messageText">Waiting for response...</div>
+    </section>
+
+    <section class="panel">
+        <div class="label">Disk Input</div>
+        <textarea id="diskInput" placeholder="Type content to save into the disk..."></textarea>
     </section>
 
     <section class="buttons">
-        <button class="btn-read" id="readButton">Read</button>
         <button class="btn-write" id="writeButton">Write</button>
+        <button class="btn-read" id="readButton">Read</button>
         <button class="btn-reset" id="resetButton">Reset</button>
+        <button class="btn-clear" id="clearButton">Clear</button>
     </section>
 
-    <div class="footer">The page updates the disk state after each action.</div>
+    <section class="panel">
+        <div class="label">Disk Content</div>
+        <div class="content-view" id="contentText">(empty)</div>
+    </section>
+
+    <section class="panel">
+        <div class="label">History</div>
+        <ul class="history" id="historyList"></ul>
+    </section>
 </main>
 
 <script>
     const app = document.getElementById('app');
     const stateText = document.getElementById('stateText');
     const messageText = document.getElementById('messageText');
+    const contentText = document.getElementById('contentText');
+    const historyList = document.getElementById('historyList');
+    const diskInput = document.getElementById('diskInput');
+
     const buttons = [
-        document.getElementById('readButton'),
         document.getElementById('writeButton'),
-        document.getElementById('resetButton')
+        document.getElementById('readButton'),
+        document.getElementById('resetButton'),
+        document.getElementById('clearButton')
     ];
 
-    // Convierte el nombre del estado a una clase visual.
+    // Mapea el estado a una clase visual para mantener el indicador simple.
     function getStateClass(state) {
         const normalized = String(state || '').trim().toLowerCase();
-
         if (normalized === 'reading') return 'state-reading';
         if (normalized === 'writing') return 'state-writing';
         if (normalized === 'error') return 'state-error';
         return 'state-idle';
     }
 
-    // Actualiza la interfaz con la respuesta JSON del backend.
+    // Sincroniza el contenido principal de la pantalla con la respuesta del backend.
     function renderResponse(data) {
         const state = data?.state || 'Unknown';
         const message = data?.message || 'No message available.';
+        const content = data?.content ?? '';
+        const history = Array.isArray(data?.history) ? data.history : [];
 
         stateText.textContent = state;
         messageText.textContent = message;
+        contentText.textContent = content.trim() === '' ? '(empty)' : content;
+
+        historyList.innerHTML = '';
+        history.slice().reverse().forEach((entry) => {
+            const item = document.createElement('li');
+            item.textContent = entry;
+            historyList.appendChild(item);
+        });
 
         app.className = `card ${getStateClass(state)}`;
     }
@@ -234,12 +235,16 @@
         });
     }
 
-    async function callApi(url, method) {
+    async function callApi(url, method, payload) {
         setButtonsDisabled(true);
 
         try {
-            const response = await fetch(url, { method });
+            const options = { method, headers: { 'Content-Type': 'application/json' } };
+            if (payload !== undefined) {
+                options.body = JSON.stringify(payload);
+            }
 
+            const response = await fetch(url, options);
             if (!response.ok) {
                 throw new Error(`Request failed with status ${response.status}`);
             }
@@ -257,9 +262,22 @@
         await callApi('/disk/state', 'GET');
     }
 
-    document.getElementById('readButton').addEventListener('click', () => callApi('/disk/read', 'POST'));
-    document.getElementById('writeButton').addEventListener('click', () => callApi('/disk/write', 'POST'));
-    document.getElementById('resetButton').addEventListener('click', () => callApi('/disk/reset', 'POST'));
+    document.getElementById('writeButton').addEventListener('click', () => {
+        callApi('/disk/write', 'POST', { data: diskInput.value });
+    });
+
+    document.getElementById('readButton').addEventListener('click', () => {
+        callApi('/disk/read', 'GET');
+    });
+
+    document.getElementById('resetButton').addEventListener('click', () => {
+        callApi('/disk/reset', 'POST');
+    });
+
+    document.getElementById('clearButton').addEventListener('click', () => {
+        callApi('/disk/clear', 'POST');
+        diskInput.value = '';
+    });
 
     window.addEventListener('DOMContentLoaded', loadState);
 </script>

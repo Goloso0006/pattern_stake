@@ -8,8 +8,10 @@ public interface DiskState {
 
     String read(Disk disk);
 
-    String write(Disk disk);
+    String write(Disk disk, String data);
 
     String reset(Disk disk);
+
+    String clear(Disk disk);
 }
 

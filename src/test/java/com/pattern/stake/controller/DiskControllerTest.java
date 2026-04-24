@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -33,37 +34,58 @@ class DiskControllerTest {
         mockMvc.perform(get("/disk/state"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.state").value("Idle"))
-                .andExpect(jsonPath("$.message").value("Current state retrieved."));
+                .andExpect(jsonPath("$.message").value("Current state retrieved."))
+                .andExpect(jsonPath("$.history").isArray());
     }
 
     @Test
     void shouldStartReadingAndReturnJsonResponse() throws Exception {
-        mockMvc.perform(post("/disk/read"))
+        mockMvc.perform(get("/disk/read"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.state").value("Reading"))
-                .andExpect(jsonPath("$.message").value("Disk started reading."));
+                .andExpect(jsonPath("$.message").value("Read operation started."));
     }
 
     @Test
-    void shouldStartWritingAndReturnJsonResponse() throws Exception {
-        mockMvc.perform(post("/disk/write"))
+    void shouldWriteDataAndReturnJsonResponse() throws Exception {
+        mockMvc.perform(post("/disk/write")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"data\":\"hello disk\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.state").value("Writing"))
-                .andExpect(jsonPath("$.message").value("Disk started writing."));
+                .andExpect(jsonPath("$.message").value("Data saved to disk."));
     }
 
     @Test
     void shouldResetDiskAfterInvalidTransition() throws Exception {
-        mockMvc.perform(post("/disk/read"))
+        mockMvc.perform(get("/disk/read"))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(post("/disk/write"))
+        mockMvc.perform(post("/disk/write")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"data\":\"blocked\"}"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(post("/disk/reset"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.state").value("Idle"))
                 .andExpect(jsonPath("$.message").value("Disk recovered from error to idle."));
+    }
+
+    @Test
+    void shouldClearDiskContent() throws Exception {
+        mockMvc.perform(post("/disk/write")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"data\":\"to-clear\"}"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(post("/disk/reset"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(post("/disk/clear"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Disk content cleared."))
+                .andExpect(jsonPath("$.content").value(""));
     }
 }
 

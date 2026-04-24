@@ -12,18 +12,33 @@ public class WritingState implements DiskState {
     @Override
     public String read(Disk disk) {
         disk.setState(new ErrorState());
-        return "Disk cannot read while writing and moved to error state.";
+        String message = "Cannot read while writing. Disk moved to error state.";
+        disk.addHistory("WRITING -> ERROR: " + message);
+        return message;
     }
 
     @Override
-    public String write(Disk disk) {
-        return "Disk is already writing.";
+    public String write(Disk disk, String data) {
+        disk.saveContent(data);
+        String message = "Data updated while writing.";
+        disk.addHistory("WRITING -> WRITING: " + message);
+        return message;
     }
 
     @Override
     public String reset(Disk disk) {
         disk.setState(new IdleState());
-        return "Disk reset from writing to idle.";
+        String message = "Disk reset from writing to idle.";
+        disk.addHistory("WRITING -> IDLE: " + message);
+        return message;
+    }
+
+    @Override
+    public String clear(Disk disk) {
+        disk.clearContent();
+        String message = "Disk content cleared while writing.";
+        disk.addHistory("WRITING -> WRITING: " + message);
+        return message;
     }
 }
 

@@ -11,18 +11,31 @@ public class ErrorState implements DiskState {
 
     @Override
     public String read(Disk disk) {
-        return "Disk is in error state. Reset is required.";
+        String message = "Disk is in error state. Reset is required.";
+        disk.addHistory("ERROR -> ERROR: " + message);
+        return message;
     }
 
     @Override
-    public String write(Disk disk) {
-        return "Disk is in error state. Reset is required.";
+    public String write(Disk disk, String data) {
+        String message = "Disk is in error state. Reset is required.";
+        disk.addHistory("ERROR -> ERROR: " + message);
+        return message;
     }
 
     @Override
     public String reset(Disk disk) {
         disk.setState(new IdleState());
-        return "Disk recovered from error to idle.";
+        String message = "Disk recovered from error to idle.";
+        disk.addHistory("ERROR -> IDLE: " + message);
+        return message;
+    }
+
+    @Override
+    public String clear(Disk disk) {
+        String message = "Disk is in error state. Reset is required.";
+        disk.addHistory("ERROR -> ERROR: " + message);
+        return message;
     }
 }
 

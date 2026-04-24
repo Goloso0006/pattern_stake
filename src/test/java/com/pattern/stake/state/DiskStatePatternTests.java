@@ -20,7 +20,7 @@ class DiskStatePatternTests {
 
         String message = disk.read();
 
-        assertEquals("Disk started reading.", message);
+        assertEquals("Read operation started.", message);
         assertEquals("READING", disk.getStateName());
     }
 
@@ -28,10 +28,11 @@ class DiskStatePatternTests {
     void writeMovesDiskFromIdleToWriting() {
         Disk disk = new Disk();
 
-        String message = disk.write();
+        String message = disk.write("test-content");
 
-        assertEquals("Disk started writing.", message);
+        assertEquals("Data saved to disk.", message);
         assertEquals("WRITING", disk.getStateName());
+        assertEquals("test-content", disk.getContent());
     }
 
     @Test
@@ -39,20 +40,20 @@ class DiskStatePatternTests {
         Disk disk = new Disk();
         disk.read();
 
-        String message = disk.write();
+        String message = disk.write("blocked");
 
-        assertEquals("Disk cannot write while reading and moved to error state.", message);
+        assertEquals("Cannot write while reading. Disk moved to error state.", message);
         assertEquals("ERROR", disk.getStateName());
     }
 
     @Test
     void readWhileWritingMovesDiskToError() {
         Disk disk = new Disk();
-        disk.write();
+        disk.write("first");
 
         String message = disk.read();
 
-        assertEquals("Disk cannot read while writing and moved to error state.", message);
+        assertEquals("Cannot read while writing. Disk moved to error state.", message);
         assertEquals("ERROR", disk.getStateName());
     }
 
@@ -60,12 +61,24 @@ class DiskStatePatternTests {
     void resetFromErrorReturnsDiskToIdle() {
         Disk disk = new Disk();
         disk.read();
-        disk.write();
+        disk.write("blocked");
 
         String message = disk.reset();
 
         assertEquals("Disk recovered from error to idle.", message);
         assertEquals("IDLE", disk.getStateName());
+    }
+
+    @Test
+    void clearContentWorksInIdleState() {
+        Disk disk = new Disk();
+        disk.write("some-data");
+        disk.reset();
+
+        String message = disk.clear();
+
+        assertEquals("Disk content cleared.", message);
+        assertEquals("", disk.getContent());
     }
 }
 

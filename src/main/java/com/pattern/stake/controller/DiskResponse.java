@@ -1,4 +1,6 @@
 package com.pattern.stake.controller;
 
-public record DiskResponse(String state, String message) {
+import java.util.List;
+
+public record DiskResponse(String state, String message, String content, List<String> history) {
 }

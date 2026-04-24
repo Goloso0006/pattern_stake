@@ -12,19 +12,34 @@ public class IdleState implements DiskState {
     @Override
     public String read(Disk disk) {
         disk.setState(new ReadingState());
-        return "Disk started reading.";
+        String message = "Read operation started.";
+        disk.addHistory("IDLE -> READING: " + message);
+        return message;
     }
 
     @Override
-    public String write(Disk disk) {
+    public String write(Disk disk, String data) {
+        disk.saveContent(data);
         disk.setState(new WritingState());
-        return "Disk started writing.";
+        String message = "Data saved to disk.";
+        disk.addHistory("IDLE -> WRITING: " + message);
+        return message;
     }
 
     @Override
     public String reset(Disk disk) {
         disk.setState(this);
-        return "Disk is already idle.";
+        String message = "Disk is already idle.";
+        disk.addHistory("IDLE -> IDLE: " + message);
+        return message;
+    }
+
+    @Override
+    public String clear(Disk disk) {
+        disk.clearContent();
+        String message = "Disk content cleared.";
+        disk.addHistory("IDLE -> IDLE: " + message);
+        return message;
     }
 }
 
